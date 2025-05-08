@@ -17,20 +17,9 @@ class Flags(IntFlag):
     NETWORK_SOURCES = auto()    # allow network sources
     DYNAMIC_BACKEND = auto()    # allow switching backend at runtime
     RUNTIME_INSTALL = auto()    # allow runtime installation of backend modules
-    FS_PROBE = auto()           # allow filesystem probing
-
-
-class ReadFlags(IntFlag):
-    """
-    Enum for read flags used in the JsonIO mixin.
-
-    This enum is used to define flags that can be passed to the read method of the JsonIO mixin.
-    The flags are used to control the behavior of the method, such as whether to treat the source as a path,
-    whether to treat the source as a JSON string, etc.
-    """
-    NONE = 0
-    IS_PATH = auto()
-    IS_JSON = auto()
+    IS_PATH         = auto()    # is path
+    IS_JSON         = auto()    # is json
+    FS_PROBE        = auto()    # file system probe
 
 
 class Backend(Enum):

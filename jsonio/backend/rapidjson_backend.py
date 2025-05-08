@@ -2,7 +2,8 @@ from typing import Any, Optional
 
 import rapidjson
 
-from jsonio.backend import JsonReaderBackendProtocol, JsonWriterBackendProtocol, OpenFilePointer
+from jsonio._utils import OpenFilePointer
+from jsonio.backend.protocol import JsonReaderBackendProtocol, JsonWriterBackendProtocol
 
 
 class RapidjsonBackend(JsonReaderBackendProtocol, JsonWriterBackendProtocol):

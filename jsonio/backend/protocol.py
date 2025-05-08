@@ -1,7 +1,6 @@
 from typing import runtime_checkable, Protocol, Optional, Any
 
-from jsonio._utils import DecoderClass
-from jsonio.backend import OpenFilePointer
+from jsonio._utils import DecoderClass, OpenFilePointer
 
 
 @runtime_checkable

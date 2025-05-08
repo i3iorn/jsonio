@@ -2,7 +2,8 @@ from typing import Any, Optional, IO
 
 import orjson
 
-from jsonio.backend import JsonReaderBackendProtocol, JsonWriterBackendProtocol, OpenFilePointer
+from jsonio._utils import OpenFilePointer
+from jsonio.backend.protocol import JsonReaderBackendProtocol, JsonWriterBackendProtocol
 
 
 class OrjsonBackend(JsonReaderBackendProtocol, JsonWriterBackendProtocol):

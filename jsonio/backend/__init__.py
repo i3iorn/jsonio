@@ -2,7 +2,7 @@ import importlib
 import logging
 from typing import Type
 
-from jsonio._utils import Backend
+from jsonio._utils import Backend, Flags
 from jsonio.backend.protocol import JsonBackendProtocol
 
 _logger = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ _BACKEND_CLASSES = {
 }
 
 
-def load_backend(backend: Backend) -> JsonBackendProtocol:
+def load_backend(backend: Backend, flags: Flags) -> JsonBackendProtocol:
     """
     Lazily import and return a backend class instance.
     """
@@ -26,11 +26,25 @@ def load_backend(backend: Backend) -> JsonBackendProtocol:
     module_path, class_name = _BACKEND_CLASSES[backend].rsplit(".", 1)
 
     try:
-        module = importlib.import_module(f"jsonio.backends.{module_path}")
+        module = importlib.import_module(f"jsonio.backend.{module_path}")
         backend_cls: Type[JsonBackendProtocol] = getattr(module, class_name)
         return backend_cls()
     except ImportError as e:
-        _logger.error(f"Backend '{backend.value}' is not installed: {e}")
-        raise ImportError(
-            f"Backend '{backend.value}' is not available. Please install it manually or use InstallerFactory."
-        ) from e
+        msg = f"Backend '{backend.value}' is not installed: {e}"
+        if Flags.RUNTIME_INSTALL in flags:
+            _logger.info(msg)
+            try:
+                from jsonio.backend._installer import InstallerFactory
+                installer = InstallerFactory.get_installer(backend)
+                installer.install()
+                module = importlib.import_module(f"jsonio.backend.{module_path}")
+                backend_cls: Type[JsonBackendProtocol] = getattr(module, class_name)
+                return backend_cls()
+            except Exception as install_error:
+                _logger.error(f"Failed to install backend '{backend.value}': {install_error}")
+                raise ImportError(msg) from install_error
+        else:
+            _logger.error(msg)
+            raise ImportError(
+                f"Backend '{backend.value}' is not available. Please install it manually or use InstallerFactory."
+            ) from e
